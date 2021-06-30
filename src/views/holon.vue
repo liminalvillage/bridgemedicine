@@ -56,16 +56,20 @@ export default {
           this.quoteauthor = json.quoteauthor
           this.holons = json.holons
           // fetch names of each sub-holon
-          if (this.holons) {
-            for (var i = 0; i < this.holons.length; i++) {
-              fetch('/text/' + this.holons[i].id + '.json')
-                .then(r => r.json())
-                .then(json => {
-                  this.holonslabels.push(json.name)
-                  this.holonsimages.push(json.image)
-                })
-            }
-          }
+          Promise.all(
+            this.holons.map(async (holon) => {
+              var r = await fetch('/text/' + holon.id + '.json')
+              var json = await r.json()
+              this.holonslabels.push(json.name)
+              this.holonsimages.push(json.image)
+            })
+          )
+          // fetch('/text/' + this.holons[i].id + '.json')
+          //   .then(r => r.json())
+          //   .then(json => {
+          //     this.holonslabels[i] = json.name
+          //     this.holonsimages.push(json.image)
+          //   })
         },
         response => {
           console.log('Error loading json:', response)
