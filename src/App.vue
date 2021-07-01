@@ -7,10 +7,8 @@
 // import Router from 'vue-router'
 // Vue.use(Router)
 // const router = new Router()
-import VueMarkdown from 'vue-markdown'
 export default {
   components: {
-    VueMarkdown,
     home: () => import('./views/home'),
     holon: () => import('./views/holon'),
     settings: () => import('./views/settings')
@@ -29,6 +27,10 @@ export default {
 }
 </script>
 <style>
+a {
+  color:  var( --primary);
+  font-style: bold
+}
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700');
 @import url('https://use.fontawesome.com/releases/v5.1.0/css/all.css');
 </style>
