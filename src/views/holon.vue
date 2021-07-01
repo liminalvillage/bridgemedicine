@@ -13,7 +13,7 @@
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
       :label="holonslabels[index]"
-      :angle=" 180 - (index * (180./(holons.length-1)))"
+      :angle=" 200 - (index * (220./(holons.length-1)))"
       size="m"
       :distance="130"
       :label-pos="index>=holons.length/2?'right':'left'"
@@ -57,19 +57,28 @@ export default {
           this.holons = json.holons
           // fetch names of each sub-holon
           Promise.all(
-            this.holons.map(async (holon) => {
+            this.holons.map(async (holon, index) => {
               var r = await fetch('/text/' + holon.id + '.json')
               var json = await r.json()
-              this.holonslabels.push(json.name)
-              this.holonsimages.push(json.image)
+              // this.holonslabels[index] = json.name
+              // this.holonsimages[index] = json.image
+              return json.name
             })
-          )
-          // fetch('/text/' + this.holons[i].id + '.json')
-          //   .then(r => r.json())
-          //   .then(json => {
-          //     this.holonslabels[i] = json.name
-          //     this.holonsimages.push(json.image)
-          //   })
+          ).then((values) => {
+            this.holonslabels = values
+          })
+          // fetch images of each sub-holon
+          Promise.all(
+            this.holons.map(async (holon, index) => {
+              var r = await fetch('/text/' + holon.id + '.json')
+              var json = await r.json()
+              // this.holonslabels[index] = json.name
+              // this.holonsimages[index] = json.image
+              return json.image
+            })
+          ).then((values) => {
+            this.holonsimages = values
+          })
         },
         response => {
           console.log('Error loading json:', response)
