@@ -17,7 +17,10 @@
     "plants"
   ],
   "dependencies": {
+    "babel": "^6.23.0",
+    "babel-runtime": "^6.26.0",
     "vue": "^2.6.10",
+    "vue-markdown": "^2.2.4",
     "vue-router": "^3.0.6",
     "zircle": "^1.2.5"
   },

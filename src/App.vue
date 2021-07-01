@@ -7,8 +7,10 @@
 // import Router from 'vue-router'
 // Vue.use(Router)
 // const router = new Router()
+import VueMarkdown from 'vue-markdown'
 export default {
   components: {
+    VueMarkdown,
     home: () => import('./views/home'),
     holon: () => import('./views/holon'),
     settings: () => import('./views/settings')
