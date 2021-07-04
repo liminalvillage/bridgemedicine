@@ -9,7 +9,7 @@
       <br/>
       <i><b>{{quoteauthor}}</b></i>
     </div>
-    <div v-else slot="default" style="width:85%;margin:5%;"> <vue-markdown>{{text}}</vue-markdown></div>
+    <div v-else slot="default" style="width:85%;margin:5%;"> <vue-markdown :source="this.text"></vue-markdown></div>
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
       :label="holonslabels[index]"
@@ -21,7 +21,7 @@
        >
        <!-- :style="[{backgroundImage:`url(./images/${holonsimages[index]})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
       -->
-      <img v-if=holonsimages[index] :src="`./images/${holonsimages[index]}`" style="width: 80%; margin-top:auto; margin-bottom:auto; filter: hue-rotate(180deg);">
+      <img v-if=holonsimages[index] :src="`./images/${holonsimages[index]}`" style="width: 80%; margin-top:auto; margin-bottom:auto;">
        <!-- :imagePath = "holonsimages[index]?'./images/'+ holonsimages[index]:''"
       -->
       </z-spot>
@@ -46,16 +46,14 @@ export default {
   },
   methods: {
     holonInfo () {
-      var id
-      if (this.$zircle.getParams() !== undefined) {
-        id = this.$zircle.getParams().id
+      if (this.$zircle.getParams()) {
+        this.id = this.$zircle.getParams().id
       } else {
-        id = 'home'
+        this.id = 'home'
       }
-      fetch('/text/' + id + '.json')
+      fetch('/text/' + this.$store.state.language + '/' + this.id + '.json')
         .then(r => r.json())
         .then(json => {
-          this.id = id
           this.name = json.name
           this.text = json.text
           this.quote = json.quote
@@ -66,7 +64,7 @@ export default {
             // fetch names of each sub-holon
             Promise.all(
               this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + holon.id + '.json')
+                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
                 var json = await r.json()
                 return json.name
               })
@@ -76,7 +74,7 @@ export default {
             // fetch images of each sub-holon
             Promise.all(
               this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + holon.id + '.json')
+                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
                 var json = await r.json()
                 return json.image
               })
@@ -96,7 +94,8 @@ export default {
 
   data () {
     return {
-      id: '',
+      id: 'home',
+      language: 'en',
       name: '',
       text: '',
       quote: '',

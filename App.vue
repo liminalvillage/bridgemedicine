@@ -9,7 +9,6 @@ Vue.use(Router)
 const router = new Router()
 export default {
   components: {
-    home: () => import('./views/home'),
     holon: () => import('./views/holon'),
     settings: () => import('./views/settings')
   },
@@ -23,7 +22,7 @@ export default {
       },
       debug: true
     })
-    this.$zircle.setView('home')
+    this.$zircle.setView('holon')
   }
 }
 </script>

@@ -20,9 +20,13 @@ export default {
         theme: 'black',
         mode: 'dark'
       },
-      debug: false
+      debug: true
     })
-    this.$zircle.setView('holon')
+    this.$zircle.toView('home')
+    //
+    //   to: 'holon',
+    //   params: { id: 'home' } // Optional
+    // })
   }
 }
 </script>
