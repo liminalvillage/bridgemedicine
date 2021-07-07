@@ -1,5 +1,5 @@
 {
-    "name": "Bridge Medicine",
+    "name": "Bridge Medicine IT",
     "image":"bridgemedicine.png",
     "holons" : 
     [
@@ -9,6 +9,6 @@
     { "id": "roots", "image": "roots" },
     { "id": "plants", "image": "plants" },
     { "id": "me", "image": "me" },
-    { "id": "go", "image": "go" }
+    { "id": "homeit", "image": "go" }
     ]
 }
