@@ -12,12 +12,15 @@
     <div v-else slot="default" style="width:85%;margin:5%;"> <vue-markdown :source="this.text"></vue-markdown></div>
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
+      :knob="editing ? true : false"
+      @click.native= "normalize(index)"
+      :qty.sync="knobValue[index]"
       :label="holonslabels[index]"
       :angle=" 200 - (index * (220./(holons.length-1)))"
       size="m"
       :distance="130"
       :label-pos="index>=holons.length/2?'right':'left'"
-      :to-view="{name:'holon', params: {id: holon.id}}"
+      :to-view="editing ? '': {name:'holon', params: {id: holon.id}}"
        >
        <!-- :style="[{backgroundImage:`url(./images/${holonsimages[index]})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
       -->
@@ -34,6 +37,17 @@
         to-view="settings">
         <i class="fas fa-sliders-h"></i>
       </z-spot> -->
+      <!-- Edit signals -->
+       <z-spot
+        button
+        :angle="90"
+        :distance="50"
+        size="s"
+        :label="editing ? 'Save' : 'Edit'"
+        @click.native="editing ? editing = false : editing = true">
+        <i v-if="editing" class="fas fa-save"></i>
+        <i v-else class="fas fa-edit"></i>
+      </z-spot>
     </div>
   </z-view>
 </template>
@@ -45,47 +59,117 @@ export default {
     VueMarkdown
   },
   methods: {
-    holonInfo () {
+    async fetchGithubContributors (id) {
+      // fetch(id, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'text/plain',
+      //     'Accept': 'application/vnd.github.v3+json'
+      //   }
+      // })
+      //   .then(response => response.json()) // Converting the response to a JSON object
+      //   .then(data => document.body.append())
+      //   .catch(error => console.error(error))
+
+      var r = await fetch(id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/plain',
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      })
+      return r.json()
+    },
+    async fetchInfo (id) {
+      // if (id.includes('github')) {
+      //   var res = await this.fetchGithubContributors(id)
+      //   var json = {}
+      //   json.name = res.login
+      //   json.image = res.avatar
+      //   return json
+      // }
+      var r = await fetch('/text/' + id + '.json')
+      if (r.ok) {
+        var json
+        json = await r.json().catch(() => {
+          console.log(id + ' not found')
+          json = {}
+          json.name = id
+          json.id = id
+          json.image = 'notfound.png'
+          return json
+        })
+        return json
+      } else {
+        console.log(id + ' not found')
+        json.name = id
+        json.id = id
+        json.image = 'notfound'
+        return json
+      }
+    },
+    async holonInfo () {
       if (this.$zircle.getParams()) {
         this.id = this.$zircle.getParams().id
       } else {
         this.id = 'home'
       }
-      fetch('/text/' + this.$store.state.language + '/' + this.id + '.json')
-        .then(r => r.json())
-        .then(json => {
-          this.name = json.name
-          this.text = json.text
-          this.quote = json.quote
-          this.image = json.image
-          this.quoteauthor = json.quoteauthor
-          this.holons = json.holons
-          if (json.holons) {
-            // fetch names of each sub-holon
-            Promise.all(
-              this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
-                var json = await r.json()
-                return json.name
-              })
-            ).then((values) => {
-              this.holonslabels = values
+      var json = await this.fetchInfo(this.id)
+      if (json) {
+        this.name = json.name
+        this.text = json.text
+        this.quote = json.quote
+        this.image = json.image
+        this.quoteauthor = json.quoteauthor
+        this.holons = json.holons
+        if (json.holons) {
+          // fetch names of each sub-holon
+          Promise.all(
+            this.holons.map(async (holon, index) => {
+              var json = await this.fetchInfo(holon.id)
+              return json.name
             })
-            // fetch images of each sub-holon
-            Promise.all(
-              this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
-                var json = await r.json()
-                return json.image
-              })
-            ).then((values) => {
-              this.holonsimages = values
+          ).then((values) => {
+            this.holonslabels = values
+          })
+          // fetch images of each sub-holon
+          Promise.all(
+            this.holons.map(async (holon, index) => {
+              var json = await this.fetchInfo(holon.id)
+              return json.image
             })
-          }
-        },
-        response => {
-          console.log('Error loading json:', response)
+          ).then((values) => {
+            this.holonsimages = values
+          })
+        }
+      }
+    },
+    truncate (text) {
+      return text.substring(0, 6) + '..'
+    },
+    normalize (idx) {
+      var index = idx + (this.$zircle.getCurrentPageIndex() * 10)
+      var qty = this.knobValue[index]
+      var total = this.knobValue.reduce((total, num) => total + num)
+      if (total > 100) {
+        var diff = total - 100 // qty - this.previousKnobValue[index]
+
+        var delta
+        //  if (total == 0) {//all sliders are 0 except changed, distribute change equally
+        //    delta = this.knobValue.map(() => { return - (1/(this.knobValue.length-1)) * diff})
+        //  }
+        //  else {
+        delta = this.knobValue.map((x) => { return -x / (total - qty) * diff })
+        //  }
+
+        var normal = this.knobValue.map((x, idx) => {
+          return Math.floor(x + delta[idx])
         })
+        normal[index] = qty // copy correct value for current slider
+        this.knobValue = Object.assign([], this.knobValue, normal)
+        // this.previousKnobValue = Object.assign([],this.knobValue,this.knobValue);
+        console.log(this.knobValue.reduce((total, num) => total + num))
+      }// return this.knobValue.map((x) => { return (x *100) /this.knobValue.reduce((total, num)=> total + num);} );
     }
   },
   mounted () {
@@ -94,6 +178,7 @@ export default {
 
   data () {
     return {
+      editing: false,
       id: 'home',
       language: 'en',
       name: '',
@@ -103,7 +188,8 @@ export default {
       image: '',
       holons: [],
       holonslabels: [],
-      holonsimages: []
+      holonsimages: [],
+      knobValue: []
     }
   }
 }

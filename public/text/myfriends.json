@@ -1,0 +1,11 @@
+{
+    "name": "My Friends",
+    "quote": "Whatever you do, if you do it sincerely, will eventually become a bridge to your wholeness, a good ship that carries you through the darkness...",
+    "quoteauthor": "Roberto Valenti",
+    "holons" : 
+    [
+    { "id": "ollie"},
+    { "id": "tim" },
+    { "id": "gien" }
+    ]
+}

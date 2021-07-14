@@ -1,0 +1,13 @@
+{
+    "name": "My Projects",
+    "text": "My projects are to be intended as parts of an ecosystem as they are key components and require each other to function. They all take care of a specific aspect of what components are required for the implementation of a prosocial and regenerative operating system for the planet",
+    "holons" : 
+    [
+    { "id": "adacast"},
+    { "id": "xsexchange"},
+    { "id": "wequest"},
+    { "id": "liminal village"},
+    { "id": "theos"},
+    { "id": "https://api.github.com/repos/liminalvillage/local/contributors"}
+    ]
+}

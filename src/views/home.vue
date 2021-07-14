@@ -13,7 +13,7 @@
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
       :label="holonslabels[index]"
-      :angle=" 200 - (index * (220./(holons.length-1)))"
+      :angle=" 200 - (index * (220./(holons.length)))"
       size="m"
       :distance="130"
       :label-pos="index>=holons.length/2?'right':'left'"
@@ -83,7 +83,7 @@ export default {
       this.holonInfo()
     },
     holonInfo () {
-      fetch('/text/' + this.$store.state.language + '/home.json')
+      fetch('/text/home.json')
         .then(r => r.json())
         .then(json => {
           this.name = json.name
@@ -96,7 +96,7 @@ export default {
             // fetch names of each sub-holon
             Promise.all(
               this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
+                var r = await fetch('/text/' + holon.id + '.json')
                 var json = await r.json()
                 return json.name
               })
@@ -106,7 +106,7 @@ export default {
             // fetch images of each sub-holon
             Promise.all(
               this.holons.map(async (holon, index) => {
-                var r = await fetch('/text/' + this.$store.state.language + '/' + holon.id + '.json')
+                var r = await fetch('/text/' + holon.id + '.json')
                 var json = await r.json()
                 return json.image
               })

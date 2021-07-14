@@ -1,0 +1,10 @@
+{
+    "name": "Holons",
+    "image":"bridgemedicine.png",
+    "holons" : 
+    [
+    { "id": "roberto"},
+    { "id": "ollie"},
+    { "id": "tim"}
+    ]
+}
