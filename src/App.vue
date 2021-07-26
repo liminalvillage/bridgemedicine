@@ -11,6 +11,7 @@ export default {
   components: {
     home: () => import('./views/home'),
     holon: () => import('./views/holon'),
+    github: () => import('./views/githubholon'),
     settings: () => import('./views/settings')
   },
   mounted () {
@@ -22,7 +23,7 @@ export default {
       },
       debug: true
     })
-    this.$zircle.toView('home')
+    this.$zircle.toView('github')
     //
     //   to: 'holon',
     //   params: { id: 'home' } // Optional

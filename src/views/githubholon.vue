@@ -1,7 +1,7 @@
 <template>
-   <z-view   :style="[{backgroundImage:`url(./images/${this.image})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
+   <z-view   :style="[{backgroundImage:`url(${this.image})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
       >
-    <div v-if="!text">
+    <div v-if="!description">
       <h1>{{name}}</h1>
       <br/>
       <!-- <i v-if="quote">"{{quote}}"</i>
@@ -9,7 +9,7 @@
       <br/>
       <i><b>{{quoteauthor}}</b></i> -->
     </div>
-    <div v-else slot="default" style="width:85%;margin:5%;"> <vue-markdown :source="this.text"></vue-markdown></div>
+    <div v-else slot="default" style="width:85%;margin:5%;"> <vue-markdown :source="this.description"></vue-markdown></div>
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
       :knob="editing ? true : false"
@@ -46,6 +46,22 @@
         <i v-if="editing" class="fas fa-save"></i>
         <i v-else class="fas fa-edit"></i>
       </z-spot>
+      <z-spot v-if="github"
+        button
+        :angle="130"
+        :distance="50"
+        size="s"
+        label="GitHub">
+        <i class="fab fa-github"> </i>
+      </z-spot>
+      <z-spot
+        button
+        :angle="50"
+        :distance="50"
+        size="s"
+        label="Comms">
+        <i class="fas fa-video"> </i>
+      </z-spot>
     </div>
   </z-view>
 </template>
@@ -57,9 +73,6 @@ export default {
     VueMarkdown
   },
   methods: {
-    goBack () {
-      window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
-    },
     async fetchGithubContributors (id) {
       // fetch(id, {
       //   method: 'POST',
@@ -84,6 +97,25 @@ export default {
     },
     async fetchInfo (id) {
       var json = {}
+      var url = new URL(id, 'https://raw.githubusercontent.com/' + this.$route.params.org + '/' + this.$route.params.repo + '/master/')
+      // Fill in information from router
+      var org = this.$route.params.org
+      var repo = this.$route.params.repo
+      var file = this.$route.params.file || id || 'package'
+
+      console.log(id + ' - ' + url.hostname + ' - ' + url.pathname + ' - ' + this.$route.params.file + ' - ')
+      //
+      var pathArray = url.pathname.split('/')
+      if (url.hostname === 'github.com') {
+        org = pathArray[1]
+        repo = pathArray[2]
+        pathArray[3] ? file = pathArray[3] : file = 'package'
+      }
+      // } else if (url.hostname === 'raw.githubusercontent.com') {
+      //   org = pathArray[1]
+      //   repo = pathArray[2]
+      //   file = id
+      // }
       // this.fetchGithubContributors(id)
       // if (id.includes('github')) {
       //   var res = await this.fetchGithubContributors(id)
@@ -91,20 +123,22 @@ export default {
       //   json.name = res.login
       //   json.image = res.avatar
       // } else {
-      var r = await fetch('/text/' + id + '.json')
+      const address = 'https://raw.githubusercontent.com/' + org + '/' + repo + '/master/' + file + '.json'
+      console.log('fetching: ' + address)
+      var r = await fetch(address)
       if (r.ok) {
         json = await r.json().catch(() => {
-          console.log(id + ' not found')
+          console.log(id + ' is not in json format')
           json = {}
-          json.name = id
+          json.name = repo
           json.id = id
           json.image = 'notfound.png'
           return json
         })
         return json
       } else {
-        console.log(id + ' not found 2')
-        json.name = id
+        console.log(id + ' not found')
+        json.name = repo
         json.id = id
         json.image = 'notfound.png'
         return json
@@ -114,13 +148,13 @@ export default {
     async holonInfo () {
       if (this.$zircle.getParams()) {
         this.id = this.$zircle.getParams().id
-      } else {
-        this.id = 'home'
-      }
+      } // else {
+      //   this.id = 'holon'
+      // }
       var json = await this.fetchInfo(this.id)
       if (json) {
         this.name = json.name
-        this.text = json.text
+        this.description = json.description
         this.quote = json.quote
         this.image = json.image
         this.quoteauthor = json.quoteauthor
@@ -182,10 +216,11 @@ export default {
   data () {
     return {
       editing: false,
-      id: 'home',
+      github: true,
+      id: '',
       language: 'en',
       name: '',
-      text: '',
+      description: '',
       quote: '',
       quoteauthor: '',
       image: '',
