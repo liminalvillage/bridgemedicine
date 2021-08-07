@@ -8,7 +8,7 @@ import Vuex from 'vuex'
 import Router from 'vue-router'
 const routes = [
   { path: '/:org/:repo', component: App },
-  { path: '/:org/:repo/:file', component: App }
+  { path: '/:org/:repo/:file*', component: App }
 ]
 Vue.use(Router)
 Vue.use(Vuex)
