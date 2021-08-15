@@ -1,0 +1,15 @@
+{
+    "name": "Holons",
+    "image":"holons.png",
+    "description": "Composable Collaborative Membranes",
+    "holons" : 
+    [
+    { "id": "http://github.com/robertovalenti/personal/holon"},
+    { "id": "http://github.com/liminalvillage/local/projects" },
+    { "id": "http://github.com/robertovalenti/worldmandala/holon"},
+    { "id": "roots" },
+    { "id": "plants"},
+    { "id": "me" },
+    { "id": "go" }
+    ]
+}

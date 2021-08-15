@@ -13,15 +13,15 @@
     <div slot="extension">
       <z-spot v-for="(holon,index) in holons" :key="holon.id"
       :knob="editing ? true : false"
-      @click.native= "knobValue[index]? normalize(index) :''"
-      :qty.sync="knobValue[index]"
+      @click.native= "holonsvalues[index]? normalize(index) :''"
+      :qty.sync="holonsvalues[index]"
       :label="holonslabels[index]"
       :angle=" 200 - (index * (220./(holons.length-1)))"
       size="m"
       :distance="130"
       :label-pos="index>=holons.length/2?'right':'left'"
       :to-view="editing ? '': {name:'github', params: {id: holon.id}}"
-      :style="[{backgroundImage:`url(./images/${holonsimages[index]})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`},{borderWidth:'$(knobValue[index])px'}]"
+      :style="[{backgroundImage:`url(./images/${holonsimages[index]})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`},{borderWidth:'$(holonsvalues[index])px'}]"
       >
       <!-- <img v-if=holonsimages[index] :src="`./images/${holonsimages[index]}`" style="width: 80%; margin-top:auto; margin-bottom:auto;"> -->
        <!-- :imagePath = "holonsimages[index]?'./images/'+ holonsimages[index]:''" -->
@@ -152,27 +152,27 @@ export default {
     },
     normalize (idx) {
       var index = idx // idx + (this.$zircle.getCurrentPageIndex() * 10)
-      var qty = this.knobValue[index]
-      var total = this.knobValue.reduce((total, num) => total + num)
+      var qty = this.holonsvalues[index]
+      var total = this.holonsvalues.reduce((total, num) => total + num)
       if (total > 100) {
-        var diff = total - 100 // qty - this.previousKnobValue[index]
+        var diff = total - 100 // qty - this.previousholonsvalues[index]
 
         var delta
         //  if (total == 0) {//all sliders are 0 except changed, distribute change equally
-        //    delta = this.knobValue.map(() => { return - (1/(this.knobValue.length-1)) * diff})
+        //    delta = this.holonsvalues.map(() => { return - (1/(this.holonsvalues.length-1)) * diff})
         //  }
         //  else {
-        delta = this.knobValue.map((x) => { return -x / (total - qty) * diff })
+        delta = this.holonsvalues.map((x) => { return -x / (total - qty) * diff })
         //  }
 
-        var normal = this.knobValue.map((x, idx) => {
+        var normal = this.holonsvalues.map((x, idx) => {
           return Math.floor(x + delta[idx])
         })
         normal[index] = qty // copy correct value for current slider
-        this.knobValue = Object.assign([], this.knobValue, normal)
-        // this.previousKnobValue = Object.assign([],this.knobValue,this.knobValue);
-        console.log(this.knobValue.reduce((total, num) => total + num))
-      }// return this.knobValue.map((x) => { return (x *100) /this.knobValue.reduce((total, num)=> total + num);} );
+        this.holonsvalues = Object.assign([], this.holonsvalues, normal)
+        // this.previousholonsvalues = Object.assign([],this.holonsvalues,this.holonsvalues);
+        console.log(this.holonsvalues.reduce((total, num) => total + num))
+      }// return this.holonsvalues.map((x) => { return (x *100) /this.holonsvalues.reduce((total, num)=> total + num);} );
     }
   },
   mounted () {
@@ -192,7 +192,7 @@ export default {
       holons: [],
       holonslabels: [],
       holonsimages: [],
-      knobValue: []
+      holonsvalues: []
     }
   }
 }

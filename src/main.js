@@ -4,11 +4,13 @@ import App from './App.vue'
 import zircle from 'zircle'
 import 'zircle/dist/zircle.css'
 import Vuex from 'vuex'
+import { VueFinalModal, ModalsContainer } from 'vue-final-modal'
 // import Vue from 'vue'
 import Router from 'vue-router'
 const routes = [
   { path: '/:org/:repo', component: App },
-  { path: '/:org/:repo/:file*', component: App }
+  { path: '/:org/:repo/:file*', component: App },
+  { path: '/:address', component: App }
 ]
 Vue.use(Router)
 Vue.use(Vuex)
@@ -31,5 +33,7 @@ const router = new Router({ routes, mode: 'history' })
 new Vue({
   store,
   router,
+  VueFinalModal,
+  ModalsContainer,
   render: h => h(App)
 }).$mount('#app')
