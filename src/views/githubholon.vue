@@ -71,7 +71,7 @@
         size ="s"
         label ="GitHub"
         label-pos = 'top'
-        @click.native ="goToSite(this.address)"
+        @click.native ="goToSite(this.url)"
         >
         <i class="fab fa-github"> </i>
       </z-spot>
@@ -152,6 +152,9 @@ export default {
       console.log('Found contributors: ' + r.json())
       return r.json()
     },
+    async fetchProjectInfo (address) {
+    // assemble info from package / npm
+    },
     async fetchEthInfo (address) { // compiles a compatible JSON from blockchain information at address
       var json = {}
       this.web3 = new Web3(new Web3.providers.WebsocketProvider('wss://ropsten.infura.io/ws/v3/966b62ed84c84715bc5970a1afecad29'))
@@ -162,7 +165,7 @@ export default {
         json.id = address
         json.name = address // check ens
         json.description = address
-        json.image = 'https://ipfs.3box.io/profile?address=' + address // check 3box
+        // json.image = 'https://ipfs.3box.io/profile?address=' + address // check 3box
       } else {
         let holon = new this.web3.eth.Contract(contractdata.abi, address)
         // const totalappreciation = await holon.methods.totalappreciation().call()
@@ -171,14 +174,11 @@ export default {
         // console.log(name)
         json.id = address
         json.name = address
-        json.image = 'https://ipfs.3box.io/profile?address=' + address
         var members = await holon.methods.listMembers().call()
         if (members) {
           json.holons = members.map((member, index) => {
             var name = holon.methods.toName(member).call()
-            var value = holon.methods.appreciation(member).call()
-            console.log(value)
-            return { 'id': member, 'label': name, 'value': value }
+            return { 'id': member, 'label': name }
           })
         }
       }
@@ -209,8 +209,8 @@ export default {
         } else if (this.$route.params.address) { // try with the info in the address bar
           return this.fetchInfo(this.$route.params.address)
         } else { // showcase home + instructions
-          console.log(Home)
-          return { Home, type }
+          json = Home
+          return { json, type }
         }
       } else if (address.includes('github.com')) { // GITHUB ADDRESS
         type = 'GITHUB'
@@ -289,13 +289,23 @@ export default {
       if (this.$zircle.getParams()) {
         this.id = this.$zircle.getParams().id
       }
+
+      if (this.id && this.id.startsWith('http')) {
+        var url = new URL(this.id)
+        if (url) {
+          var pathArray = url.pathname.split('/')
+          var file = ''
+          if (pathArray[3]) file = url.pathname.slice(url.pathname.indexOf(pathArray[2]) + pathArray[2].length)
+          this.$router.push({ path: `/${pathArray[1]}/${pathArray[2]}/${file}` })
+        }
+      }
       let r = await this.fetchInfo(this.id)
       console.log(r.type)
       var json = r.json
       if (json) {
         this.name = json.name
-        this.description = json.description
-        this.website = json.website
+        this.description = json.description ? json.description : json.text
+        this.url = json.url ? json.url : json.id
         this.quote = json.quote
         this.image = json.image
         this.quoteauthor = json.quoteauthor
@@ -304,10 +314,10 @@ export default {
           // fetch names of each sub-holon
           Promise.all(
             this.holons.map(async (holon, index) => {
-              let r = await this.fetchInfo(holon.id)
               if (holon.label) {
                 return holon.label
               } else {
+                let r = await this.fetchInfo(holon.id)
                 return r.json.name
               }
             })
@@ -317,8 +327,12 @@ export default {
           // fetch images of each sub-holon
           Promise.all(
             this.holons.map(async (holon, index) => {
-              let r = await this.fetchInfo(holon.id)
-              return r.json.image
+              if (holon.image) {
+                return holon.image
+              } else {
+                let r = await this.fetchInfo(holon.id)
+                return r.json.image
+              }
             })
           ).then((values) => {
             this.holonsimages = values
@@ -370,7 +384,7 @@ export default {
       web3: null,
       holon: null,
       editing: false,
-      website: null,
+      url: null,
       type: 'GITHUB',
       id: '',
       name: '',

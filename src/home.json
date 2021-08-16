@@ -4,12 +4,11 @@
     "description": "Composable Collaborative Membranes",
     "holons" : 
     [
-    { "id": "http://github.com/robertovalenti/personal/holon"},
-    { "id": "http://github.com/liminalvillage/local/projects" },
-    { "id": "http://github.com/robertovalenti/worldmandala/holon"},
-    { "id": "roots" },
-    { "id": "plants"},
-    { "id": "me" },
-    { "id": "go" }
+    { "id": "http://github.com/robertovalenti/personal/holon", "label": "Roberto Valenti"},
+    { "id": "http://github.com/liminalvillage/local/", "label": "Liminal Village" },
+    { "id": "http://github.com/robertovalenti/worldmandala/holon", "label": "World Mandala" },
+    { "id": "http://github.com/robertovalenti/worldmandala/holon", "label": "Hubs Network" },
+    { "id": "http://github.com/matslats", "label": "Credit Commons" },
+    { "id": "http://github.com/liminalvillage/bridgemedicine/public/text/en/home", "label": "Bridge Medicine" }
     ]
 }
