@@ -1,8 +1,9 @@
+
 <template>
-   <z-view   :style="[{backgroundImage:`url(./images/${this.image})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
+   <z-view   :style="[{backgroundImage:`url(./images/laura-bridge.jpg)`},{backgroundSize: `100% 100%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
       >
     <div v-if="!text">
-      <h1>{{name}}</h1>
+      <h1></h1>
       <br/>
       <i v-if="quote">"{{quote}}"</i>
       <br/>

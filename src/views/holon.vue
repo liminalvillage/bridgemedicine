@@ -1,7 +1,8 @@
+
 <template>
-   <z-view   :style="[{backgroundImage:`url(./images/${this.image})`},{backgroundSize: `80% 80%`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
+   <z-view 
       >
-    <div v-if="!text">
+    <div v-if="!text" slot="default" style="width:85%;margin:5%;">
       <h1>{{name}}</h1>
       <br/>
       <i v-if="quote">"{{quote}}"</i>
@@ -26,7 +27,7 @@
       -->
       </z-spot>
       <!-- settings-->
-      <!-- <z-spot
+      <!--<z-spot
         :angle="270"
         :distance="140"
         size="s"
@@ -108,3 +109,4 @@ export default {
   }
 }
 </script>
+
