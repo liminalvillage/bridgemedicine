@@ -1,14 +1,15 @@
 <template>
+       <!-- First modal -->
+   <div>
    <z-view   :style="[{backgroundImage:`url(${this.image})`},{backgroundSize: `80% 80%`},{backgroundColor: `transparent`},{backgroundRepeat: `no-repeat`},{backgroundPosition: `center`}]"
       >
-    <!-- First modal -->
     <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
       <button class="modal__close" @click="showModal = false">
-        <mdi-close></mdi-close>
+        X
       </button>
       <span class="modal__title">Hello, vue-final-modal</span>
       <div class="modal__content">
-        <p v-for="i in 5" :key="i">
+        <p v-for="i in 3" :key="i">
           Vue Final Modal is a renderless, stackable, detachable and lightweight modal component.
         </p>
       </div>
@@ -18,6 +19,18 @@
       </div>
     </vue-final-modal>
 
+    <!-- Second modal -->
+    <vue-final-modal v-model="showConfirmModal" classes="modal-container" content-class="modal-content">
+      <button class="modal__close" @click="showConfirmModal = false">
+        X
+      </button>
+      <span class="modal__title">Confirm</span>
+      <div class="modal__content">Confirm to submit.</div>
+      <div class="modal__action">
+        <v-button @click="confirm">confirm</v-button>
+        <v-button @click="showConfirmModal = false">cancel</v-button>
+      </div>
+    </vue-final-modal>
     <div>
       <h1>{{name}}</h1>
       <br/>
@@ -60,7 +73,7 @@
         size ="s"
         :label ="editing ? 'Save' : 'Edit'"
         label-pos = 'top'
-        @click.native="editing ? editing = false : editing = true; showModal = true">
+        @click.native="editing ? editing = false : editing = true">
         <i v-if="editing" class="fas fa-save"></i>
         <i v-else class="fas fa-edit"></i>
       </z-spot>
@@ -92,16 +105,17 @@
         size="s"
         label-pos = 'top'
         label="Add"
-        @click='showModal = true'>
+        @click.native="add()">
         <i class="fas fa-plus"> </i>
       </z-spot>
     </div>
   </z-view>
+  </div>
 </template>
 <script>
+import { VueFinalModal, ModalsContainer } from 'vue-final-modal'
 import VueMarkdown from 'vue-markdown'
 import Home from '../home.json'
-import VueFinalModal from 'vue-final-modal'
 // import web3 from '../libs/web3.js'
 import Web3 from 'web3'
 // import abi from '../abi.json'
@@ -120,9 +134,18 @@ export default {
   },
   components: {
     VueMarkdown,
-    VueFinalModal
+    VueFinalModal,
+    ModalsContainer
   },
   methods: {
+    confirm () {
+      this.showConfirmModal = false
+      this.showModal = false
+    },
+    add () {
+      console.log('Add holon invoked' + this.showModal)
+      this.showModal = true
+    },
     goToSite (address) {
       window.open(address)
     },
@@ -202,12 +225,9 @@ export default {
         if (this.$route.params.repo) { // fetch github info from address bar if it exist
           base = 'https://raw.githubusercontent.com/' + this.$route.params.org + '/' + this.$route.params.repo + '/master/'
           file = (this.$route.params.file ? this.$route.params.file : file)
-          if (!file.endsWith('.json')) {
-            file = file + '.json'
-          }
           fetchaddress = base + file
-        } else if (this.$route.params.address) { // try with the info in the address bar
-          return this.fetchInfo(this.$route.params.address)
+        // } else if (this.$route.params.address) { // try with the info in the address bar
+        //   return this.fetchInfo(this.$route.params.address)
         } else { // showcase home + instructions
           json = Home
           return { json, type }
@@ -217,16 +237,17 @@ export default {
         url = new URL(address)
         pathArray = url.pathname.split('/')
         base = 'https://raw.githubusercontent.com/' + pathArray[1] + '/' + pathArray[2] + '/master/'
-        if (pathArray[3]) file = url.pathname.slice(url.pathname.indexOf(pathArray[2]) + pathArray[2].length)
-        if (!file.endsWith('.json')) file += '.json'
+        file = url.pathname.slice(url.pathname.indexOf(pathArray[2]) + pathArray[2].length + 1)
         fetchaddress = base + file
+      } else if (address.includes('githubusercontent')) { // GITHUB ADDRESS
+        type = 'GITHUB CONTENT'
+        fetchaddress = address
       } else if (address.includes('gitlab')) { // GITLAB ADDRESS
         type = 'GITLAB'
         url = new URL(address)
         pathArray = url.pathname.split('/')
         base = 'https://gitlab.com/' + pathArray[1] + '/' + pathArray[2] + '/-/raw/master/'
-        if (pathArray[3]) file = url.pathname.slice(url.pathname.indexOf(pathArray[2]) + pathArray[2].length)
-        if (!file.endsWith('.json')) file += '.json'
+        file = url.pathname.slice(url.pathname.indexOf(pathArray[2]) + pathArray[2].length + 1)
         fetchaddress = base + file
       } else if (address.startsWith('http')) { // WEB ADDRESS
         type = 'WEB'
@@ -246,9 +267,9 @@ export default {
         type = 'RELATIVE'
         pathArray = this.$route.path.split('/') // source absolute path info from route
         base = 'https://raw.githubusercontent.com/' + pathArray[1] + '/' + pathArray[2] + '/master/'
-        if (pathArray[3]) file = this.$route.path.slice(this.$route.path.indexOf(pathArray[2]) + pathArray[2].length)
+        file = this.$route.path.slice(this.$route.path.indexOf(pathArray[2]) + pathArray[2].length + 1)
+        console.log(this.$route.path)
         fetchaddress = base + file.slice(0, file.lastIndexOf('/') + 1) + address
-        if (!fetchaddress.endsWith('.json')) { fetchaddress += '.json' }
       // } else if (address) { // NPM NAME
       //   // fetchaddress = 'https://registry.npmjs.org/' + address
       //   fetchaddress = base + address // temporary
@@ -256,13 +277,12 @@ export default {
         type = 'NONE'
         base = 'https://raw.githubusercontent.com/' + this.$route.params.org + '/' + this.$route.params.repo + '/master/'
         file = this.$route.params.file
-        if (!file.endsWith('.json')) {
-          file = file + '.json'
-        }
         fetchaddress = base + file
       }
       if (!fetchaddress) return { json, type }
-      console.log('Fetching: ' + fetchaddress)
+      if (fetchaddress.endsWith('/')) { fetchaddress += 'holon.json' }
+      if (!fetchaddress.endsWith('.json')) { fetchaddress += '.json' }
+      console.log('Fetching: ' + fetchaddress + ' - ' + type)
       var r = await fetch(fetchaddress)
       if (r.ok) {
         json = await r.json().catch(() => {
@@ -276,13 +296,13 @@ export default {
         return { json, type }
       } else {
         // try again with package.json
-        if (!fetchaddress.endsWith('package.json')) {
-          return this.fetchInfo(fetchaddress.slice(0, fetchaddress.lastIndexOf('/')) + '/package.json')
-        } else {
-          type = 'N/A'
-          console.log(address + ' not found')
-          return { json, type }
-        }
+        // if (!fetchaddress.endsWith('package.json')) {
+        //   return this.fetchInfo(fetchaddress.slice(0, fetchaddress.lastIndexOf('/')) + 'package.json')
+        // } else {
+        type = 'N/A'
+        console.log(address + ' not found')
+        return { json, type }
+        // }
       }
     },
     async holonInfo () { // retrieves and updates the information about this holon and its sub holons
@@ -377,10 +397,19 @@ export default {
     this.initWeb3()
     // this.holon = new Web3.eth.Contract(data.holonabi, data.holonaddress)
   },
-
+  computed: {
+    cssVars () {
+      return {
+        /* variables you want to pass to css */
+        '--image': 'https://raw.githubusercontent.com/liminalvillage/bridgemedicine/master/public/images/' + this.image + '.png'
+      }
+    }
+  },
   data () {
     return {
-      showModal: true,
+      showConfirmModal: false,
+      showModal2: false,
+      showModal: false,
       web3: null,
       holon: null,
       editing: false,
@@ -400,3 +429,51 @@ export default {
   }
 }
 </script>
+<style >
+#z-container {
+  background-image: var(--image);
+  background-size: cover;
+  background-position: center;
+}
+.z-content {
+  background: radial-gradient(40% 40% at 50% 50%,hsla(0,0%,100%,.1) 0,rgba(0,0,0,.1) 100%)
+}
+
+::v-deep .modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+::v-deep .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90%;
+  margin: 0 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  background: #fff;
+}
+.modal__title {
+  margin: 0 2rem 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.modal__content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.modal__action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 1rem 0 0;
+}
+.modal__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+</style>
