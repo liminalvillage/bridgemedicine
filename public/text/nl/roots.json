@@ -1,12 +1,13 @@
 {
-    "name": "Roots",
+    "name": "Wortels",
     "quote": "It is because my roots are so strong that I can fly",
     "quoteauthor": "Mira Nair",
     "image": "roots.png",
     "holons" : 
     [
     { "id": "adverseexperiences"},
-    { "id": "reconcilingparts" },
+    { "id": "reconcilingparts"},
+    { "id": "transgenerational therapy"},
     { "id": "familysecrets"},
     { "id": "genosociogram"},
     { "id": "reenactment"}
