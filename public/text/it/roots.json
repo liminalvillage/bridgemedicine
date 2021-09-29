@@ -1,13 +1,13 @@
 {
-    "name": "Roots",
+    "name": "Radici",
     "quote": "It is because my roots are so strong that I can fly",
     "quoteauthor": "Mira Nair",
     "image": "roots.png",
     "holons" : 
     [
     { "id": "adverseexperiences"},
-    { "id": "reconcilingparts" },
-    { "id": "transgenerationaltherapy" },
+    { "id": "reconcilingparts"},
+    { "id": "transgenerationaltherapy"},
     { "id": "familysecrets"},
     { "id": "genosociogram"},
     { "id": "reenactment"}
