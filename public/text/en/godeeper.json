@@ -7,7 +7,6 @@
     { "id": "pain", "image": "pain" },
     { "id": "roots", "image": "roots" },
     { "id": "plants", "image": "plants" },
-    { "id": "me", "image": "me" },
-    { "id": "go", "image": "go" }
+    { "id": "mystory", "image": "me" }
     ]
 }
