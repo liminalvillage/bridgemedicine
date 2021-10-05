@@ -1,0 +1,13 @@
+{
+    "name": "Go Deeper",
+    "image":"deeper.png",
+    "holons" : 
+    [
+    { "id": "medicine", "image": "medicine" },
+    { "id": "pain", "image": "pain" },
+    { "id": "roots", "image": "roots" },
+    { "id": "plants", "image": "plants" },
+    { "id": "me", "image": "me" },
+    { "id": "go", "image": "go" }
+    ]
+}
