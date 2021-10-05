@@ -3,7 +3,8 @@
     "image":"bridgemedicine.png",
     "holons" : 
     [
-    { "id": "myview"},
-    { "id": "godeeper"}
+    { "id": "starthere"},
+    { "id": "godeeper"},
+    { "id": "go"}
     ]
 }
