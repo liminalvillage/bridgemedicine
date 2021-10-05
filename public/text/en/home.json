@@ -4,11 +4,6 @@
     "holons" : 
     [
     { "id": "bridgemedicine"},
-    { "id": "medicine" },
-    { "id": "pain"},
-    { "id": "roots" },
-    { "id": "plants"},
-    { "id": "me" },
-    { "id": "go" }
+    { "id": "godeeper"}
     ]
 }
