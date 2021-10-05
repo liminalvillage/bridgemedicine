@@ -2,7 +2,7 @@
     "name": "My Story",
     "quote": "If the path before you is clear, you’re probably on someone else’s.",
     "quoteauthor": "Joseph Campbell",
-    "image": "me",
+    "image": "me.png",
     "holons" : 
     [
     { "id": "myancestors"},
