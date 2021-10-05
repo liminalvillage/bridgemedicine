@@ -1,6 +1,6 @@
 {
     "name": "Go Deeper",
-    "image":"deeper.png",
+    "image":"onthebridge.png",
     "holons" : 
     [
     { "id": "medicine", "image": "medicine" },
