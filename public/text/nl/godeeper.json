@@ -1,0 +1,14 @@
+{
+    "name": "Go Deeper",
+    "quote": "The courage to go deeper is found by letting your desire grow larger than your fear.",
+    "quoteauthor": "Oriah Dreamer",
+    "image":"onthebridge.png",
+    "holons" : 
+    [
+    { "id": "medicine", "image": "medicine" },
+    { "id": "pain", "image": "pain" },
+    { "id": "roots", "image": "roots" },
+    { "id": "plants", "image": "plants" },
+    { "id": "mystory", "image": "me" }
+    ]
+}
