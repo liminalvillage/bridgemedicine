@@ -1,14 +1,10 @@
 {
-    "name": "Bridge Medicine IT",
+    "name": "Bridge Medicine",
     "image":"bridgemedicine.png",
     "holons" : 
     [
-    { "id": "bridgemedicine"},
-    { "id": "medicine" },
-    { "id": "pain"},
-    { "id": "roots" },
-    { "id": "plants"},
-    { "id": "me" },
-    { "id": "go" }
+    { "id": "starthere"},
+    { "id": "godeeper"},
+    { "id": "go"}
     ]
 }
